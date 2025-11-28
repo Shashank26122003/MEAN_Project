@@ -3,11 +3,12 @@ const cors = require("cors");
 require("dotenv").config();
 const connectDB = require("./config/db");
 
-// Import route files
-const userRoutes = require("./routes/userRoutes");
+// Routes
+const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const orderRoutes = require("./routes/orderRoutes");
+const adminOrderRoutes = require("./routes/adminOrderRoutes");
 
 const app = express();
 
@@ -15,17 +16,29 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Connect Database
+// Connect to MongoDB
 connectDB();
 
-// Test route
+// Test Route
 app.get("/", (req, res) => res.send("API is running..."));
 
-// Routes
-app.use("/api/users", userRoutes);
-app.use("/api/products", productRoutes);
+// API Routes
+app.use("/api/auth", authRoutes);           // Register/Login
+app.use("/api/products", productRoutes);   
 app.use("/api/categories", categoryRoutes);
-app.use("/api/orders", orderRoutes);
+app.use("/api/orders", orderRoutes);        // User & admin orders
+app.use("/api/admin/orders", adminOrderRoutes); // Admin-only orders
+
+// 404 Handler for unknown routes
+app.use((req, res, next) => {
+  res.status(404).json({ message: "Route not found" });
+});
+
+// Global Error Handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: "Server error", error: err.message });
+});
 
 // Start server
 const PORT = process.env.PORT || 5000;

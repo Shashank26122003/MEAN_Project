@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { auth, adminOnly } = require("../middleware/authMiddleware");
 const {
   getOrders,
   getOrderById,
@@ -8,10 +9,19 @@ const {
   deleteOrder,
 } = require("../controllers/orderController");
 
-router.get("/", getOrders);
-router.get("/:id", getOrderById);
-router.post("/", createOrder);
-router.put("/:id", updateOrder);
-router.delete("/:id", deleteOrder);
+// Create order → only authenticated users
+router.post("/", auth, createOrder);
+
+// Get all orders → only admin
+router.get("/", auth, adminOnly, getOrders);
+
+// Get single order → admin or owner (you can add logic in controller)
+router.get("/:id", auth, getOrderById);
+
+// Update order → only admin
+router.put("/:id", auth, adminOnly, updateOrder);
+
+// Delete order → only admin
+router.delete("/:id", auth, adminOnly, deleteOrder);
 
 module.exports = router;
