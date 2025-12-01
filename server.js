@@ -9,6 +9,8 @@ const productRoutes = require("./routes/productRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const adminOrderRoutes = require("./routes/adminOrderRoutes");
+const cartRoutes = require("./routes/cartRoutes");
+const userRoutes = require("./routes/userRoutes"); // Added user routes
 
 const app = express();
 
@@ -23,11 +25,13 @@ connectDB();
 app.get("/", (req, res) => res.send("API is running..."));
 
 // API Routes
-app.use("/api/auth", authRoutes);           // Register/Login
-app.use("/api/products", productRoutes);   
-app.use("/api/categories", categoryRoutes);
-app.use("/api/orders", orderRoutes);        // User & admin orders
+app.use("/api/auth", authRoutes);               // Register/Login
+app.use("/api/products", productRoutes);       
+app.use("/api/categories", categoryRoutes);    
+app.use("/api/orders", orderRoutes);           // User & admin orders
 app.use("/api/admin/orders", adminOrderRoutes); // Admin-only orders
+app.use("/api/cart", cartRoutes);              // User cart
+app.use("/api/users", userRoutes);            // User management routes
 
 // 404 Handler for unknown routes
 app.use((req, res, next) => {
